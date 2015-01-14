@@ -25,6 +25,9 @@ RUN npm install ndm -g
 RUN rm -rf /etc/npme/node_modules/@npm
 RUN npme update
 RUN cd /etc/npme; ndm generate --uid=root --gid=root --platform=initd
+RUN cp -R /etc/npme/ /etc/npme_original
+
+COPY run.sh /run.sh
 
 # Expose ports
 EXPOSE 8080
@@ -32,4 +35,6 @@ EXPOSE 8080
 # Set the default directory where CMD will execute
 WORKDIR /etc/npme
 
-CMD service redis-server start | service nginx start | couchdb | npme restart | tail -f ./logs/*
+VOLUME /etc/npme
+
+CMD ["/run.sh"]
